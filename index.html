@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion-Controlled Music Generation Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Georgia, 'Times New Roman', serif;
+            background-color: #fafafa;
+            color: #333;
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 1.8em;
+            font-weight: normal;
+            margin-bottom: 8px;
+            color: #111;
+        }
+
+        .subtitle {
+            font-size: 0.95em;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .authors {
+            font-size: 0.9em;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .authors a {
+            color: #2a6496;
+            text-decoration: none;
+        }
+
+        .authors a:hover {
+            text-decoration: underline;
+        }
+
+        .links {
+            margin-bottom: 40px;
+            font-size: 0.9em;
+        }
+
+        .links a {
+            color: #2a6496;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .section-title {
+            font-size: 1.3em;
+            font-weight: normal;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            color: #111;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 6px;
+        }
+
+        p {
+            margin-bottom: 16px;
+            font-size: 0.95em;
+        }
+
+        .audio-section {
+            margin-top: 30px;
+        }
+
+        .emotion-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .emotion-name {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .emotion-name.sad { color: #4a6fa5; }
+        .emotion-name.happy { color: #d4842a; }
+        .emotion-name.calm { color: #5a8a6a; }
+
+        .emotion-details {
+            font-size: 0.85em;
+            color: #777;
+            margin-bottom: 14px;
+        }
+
+        audio {
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .metrics-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            margin-bottom: 16px;
+            font-size: 0.88em;
+        }
+
+        .metrics-table th, .metrics-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .metrics-table th {
+            font-weight: bold;
+            color: #555;
+            background: #f5f5f5;
+        }
+
+        .metrics-table td {
+            color: #333;
+        }
+
+        .highlight {
+            font-weight: bold;
+        }
+
+        .method-list {
+            margin: 12px 0 12px 20px;
+            font-size: 0.95em;
+        }
+
+        .method-list li {
+            margin-bottom: 8px;
+        }
+
+        footer {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            font-size: 0.82em;
+            color: #999;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <h1>Emotion-Controlled Symbolic Music Generation via Prompt Tuning with Structured Constraints</h1>
+        <p class="subtitle">ACL 2026 Student Research Workshop</p>
+        <p class="authors">
+            Pavel Pomozov, University of California, San Diego
+            <br>Advisor: Prof. Shlomo Dubnov
+        </p>
+
+        <div class="links">
+            <a href="https://github.com/Pavel-coder-2020/emotion-music-generation">[Code]</a>
+            <a href="paper/acl2026_paper.pdf">[Paper]</a>
+        </div>
+
+        <h2 class="section-title">Abstract</h2>
+        <p>
+            Controlling emotional expressions while creating symbolic music is still considered a huge problem. Most of the current methods have generated music of limited lengths or do not provide precise control over the generated piece's emotion. In the following text, we propose a hybrid approach that utilizes prompt tuning with a structured music generation process. To do this, we have trained prompt embeddings using a pre-trained SkyTNT model, keeping all base parameters frozen. We then use these learned prompt embeddings to generate music while using various constraints, increasing the music length from approximately 32 seconds to 148 seconds per piece. Our experiments, conducted using three different music pieces (sad, happy, and calm), have shown significant differentiation between each of them. Happy music had a note density of 12.0 notes per second, sad music had a note density of 5.21 notes per second, and calm music had a note density of 7.81 notes per second. We propose this work as a parameter-efficient prompt tuning application, which is currently gaining popularity in the natural language processing community, and discuss its benefits, as well as its limitations.
+        </p>
+
+        <h2 class="section-title">Method</h2>
+        <p>Our approach has three parts:</p>
+        <ol class="method-list">
+            <li><strong>P-tuning:</strong> We train 12 learnable prompt tokens per emotion on a frozen SkyTNT model using 58 labeled jazz MIDI files. Only 36,864 parameters are trained.</li>
+            <li><strong>Prompt-guided generation:</strong> Learned prompt statistics adjust tempo and rhythmic parameters, which guide a structured generation layer using musical constraints.</li>
+            <li><strong>Multi-track output:</strong> The generator produces melody, chord, and bass tracks as MIDI, creating 64-bar pieces.</li>
+        </ol>
+
+        <h2 class="section-title">Audio Examples</h2>
+        <p>Below are the 64-bar generated pieces for each emotion, rendered from MIDI to audio.</p>
+
+        <div class="audio-section">
+
+            <div class="emotion-card">
+                <div class="emotion-name sad">Sad</div>
+                <div class="emotion-details">
+                    Natural minor scale &middot; 64 BPM &middot; i-iv-VI-III progression &middot; ~148 seconds
+                </div>
+                <audio controls>
+                    <source src="audio/sad_long.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+
+            <div class="emotion-card">
+                <div class="emotion-name happy">Happy</div>
+                <div class="emotion-details">
+                    Major scale &middot; 120 BPM &middot; I-IV-V-I progression &middot; ~64 seconds
+                </div>
+                <audio controls>
+                    <source src="audio/happy_long.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+
+            <div class="emotion-card">
+                <div class="emotion-name calm">Calm</div>
+                <div class="emotion-details">
+                    Pentatonic scale &middot; 85 BPM &middot; I-ii-iii-I progression &middot; ~90 seconds
+                </div>
+                <audio controls>
+                    <source src="audio/calm_long.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+
+        </div>
+
+        <h2 class="section-title">Evaluation Results</h2>
+
+        <table class="metrics-table">
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Sad</th>
+                    <th>Happy</th>
+                    <th>Calm</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Note Density (notes/sec)</td>
+                    <td>5.21</td>
+                    <td class="highlight">12.00</td>
+                    <td>7.81</td>
+                </tr>
+                <tr>
+                    <td>Avg Duration (s)</td>
+                    <td class="highlight">0.81</td>
+                    <td>0.40</td>
+                    <td>0.64</td>
+                </tr>
+                <tr>
+                    <td>Pitch Range (semitones)</td>
+                    <td>46</td>
+                    <td>46</td>
+                    <td>45</td>
+                </tr>
+                <tr>
+                    <td>Unique Pitches</td>
+                    <td>26</td>
+                    <td>24</td>
+                    <td>21</td>
+                </tr>
+                <tr>
+                    <td>Polyphony</td>
+                    <td>4.38</td>
+                    <td>4.93</td>
+                    <td>5.00</td>
+                </tr>
+                <tr>
+                    <td>Pitch Entropy</td>
+                    <td>4.53</td>
+                    <td>4.40</td>
+                    <td>4.19</td>
+                </tr>
+                <tr>
+                    <td>Avg Velocity</td>
+                    <td>63.5</td>
+                    <td>64.1</td>
+                    <td>64.4</td>
+                </tr>
+                <tr>
+                    <td>Velocity Std Dev</td>
+                    <td>11.6</td>
+                    <td>11.7</td>
+                    <td>11.6</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="section-title">Visualization</h2>
+        <img src="results/evaluation_comparison.png" alt="Evaluation comparison across emotions" style="width:100%; border:1px solid #e0e0e0; border-radius:4px;">
+
+        <footer>
+            <p>ACL 2026 Student Research Workshop &middot; Pavel Pomozov &middot; UC San Diego</p>
+        </footer>
+
+    </div>
+</body>
+</html>
