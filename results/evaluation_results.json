@@ -1,0 +1,13 @@
+[
+  {
+    "file": "sad_long.mid",
+    "emotion": "sad",
+    "type": "generated",
+    "muspy_pitch_range": 46,
+    "n_pitches_used": 26,
+    "polyphony": 4.3674176776429805,
+    "pitch_entropy": 4.532738282191038,
+    "total_notes": 768,
+    "note_density": 5.205603253502034
+  }
+]
