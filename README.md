@@ -26,7 +26,7 @@ Visit the [demo page](https://Pavel-coder-2020.github.io/Emotion-Music-Generatio
 ## Repository Structure
 
 ```
-emotion-music-gen/
+emotion-music-generation/
 ├── README.md
 ├── index.html
 ├── code/
